@@ -1,0 +1,5 @@
+Header header
+geometry_msgs/Pose[] path
+std_msgs/Bool init
+-------
+geometry_msgs/Pose[] path

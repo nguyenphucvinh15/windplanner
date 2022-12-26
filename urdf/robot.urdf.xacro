@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+
+<robot name="Robot" xmlns:xacro="http://ros.org/wiki/xacro">
+    <!-- Extra Properties -->
+    <xacro:property name="M_PI" value="${pi}"/>
+
+    <!-- Base Properties -->
+    <xacro:property name="baseWidth" value="0.48" />
+    <xacro:property name="baseLength" value="0.56" />
+    <xacro:property name="baseHeight" value="0.16" />
+    <xacro:property name="baseMass" value="6.32010328136808"/>
+
+    <!-- Wheel Mounting Positions -->
+    <xacro:property name="baseDist" value="0.31" />
+    <xacro:property name="wheelDist" value="0.288" />
+    <xacro:property name="wheelVerticalOffset" value="0.044" />
+
+    <!-- Wheel Properties -->
+    <xacro:property name="wheelRadius" value="0.0792" />
+    <xacro:property name="wheelMass" value="0.710409049487041"/>
+
+    <!-- Caster wheel properties -->
+    <xacro:property name="casterDist" value="0.17"/>
+	<xacro:property name="casterMass" value="0.0974897430723109"/>
+
+    <!-- IMU Link -->
+    <xacro:arg name="imu_xyz"                default="0 0 0"/>
+    <xacro:arg name="imu_rpy"                default="0 0 0"/>
+    <xacro:arg name="imu_parent"             default="base_link"/>
+
+    <!-- UST10 Laser -->
+    <xacro:arg name="laser_ust10_enabled"    default="true" />
+    <xacro:arg name="laser_ust10_topic"      default="/scan" />
+    <xacro:arg name="laser_ust10_parent"     default="base_link" />
+    <xacro:arg name="laser_ust10_xyz"        default="${baseLength/2+0.035} 0 ${baseHeight/2+0.004}" />
+    <xacro:arg name="laser_ust10_rpy"        default="0 0 0" />
+
+    <!-- Realsense Camera -->
+    <xacro:arg name="camera_t265_enabled"    default="true" />
+    <xacro:arg name="realsense_xyz"          default="${-baseLength/2+0.095} 0 ${baseHeight-0.03}" />
+    <xacro:arg name="realsense_rpy"          default="0 0 0" />
+    <xacro:arg name="use_nominal_extrinsics" default="true" />
+
+    <!-- Extras -->
+    <xacro:arg name="robot_namespace"        default="/" />
+
+    <!-- Included URDF/XACRO Files -->
+    <xacro:include filename="$(find windplanner)/urdf/accessories/hokuyo_ust10.urdf.xacro" />
+    <xacro:include filename="$(find windplanner)/urdf/accessories/t265.urdf.xacro"/>
+    <xacro:include filename="$(find windplanner)/urdf/materials.urdf.xacro" />
+    <xacro:include filename="$(find windplanner)/urdf/robot.gazebo.xacro" />
+
+    <!-- Base footprint is on the ground under the robot -->
+    <link name="base_footprint"/>
+
+    <joint name="base_footprint_joint" type="fixed">
+        <origin xyz="0 0 ${wheelRadius-wheelVerticalOffset}" rpy="0 0 0" />
+        <parent link="base_footprint" />
+        <child link="base_link" />
+    </joint>
+    
+    <!-- Base link is the center of the robot's bottom plate -->
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://windplanner/meshes/base_link.STL" />   
+            </geometry>
+            <material name="light_grey" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://windplanner/meshes/base_link.STL"/> 
+            </geometry>
+        </collision>
+        <inertial>
+            <origin
+                xyz="0.0497815963716652 -0.00240290163069897 0.219482423403518"
+                rpy="0 0 0" />
+            <mass
+                value="${baseMass}" />
+            <inertia
+                ixx="0.078120181296584"
+                ixy="1.0272955771215E-05"
+                ixz="-3.32378155859835E-05"
+                iyy="0.0890353192104223"
+                iyz="4.05118597258116E-07"
+                izz="0.0593056382361878" />
+        </inertial>
+    </link>
+
+    <!-- Hokuyo UST10 Laser Scans -->
+    <xacro:if value="$(arg laser_ust10_enabled)">
+        <xacro:hokuyo_ust10_mount topic="$(arg laser_ust10_topic)" parent_link="$(arg laser_ust10_parent)">
+            <origin xyz="$(arg laser_ust10_xyz)" rpy="$(arg laser_ust10_rpy)" />
+        </xacro:hokuyo_ust10_mount>
+    </xacro:if>
+
+    <!-- Realsense T265 -->
+    <xacro:if value="$(arg camera_t265_enabled)">
+        <xacro:sensor_t265 parent="base_link" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
+            <origin xyz="$(arg realsense_xyz)" rpy="$(arg realsense_rpy)"/>
+        </xacro:sensor_t265>
+    </xacro:if>
+    
+    <!-- IMU Link: Standard location to add an IMU -->
+    <link name="imu_link"/>
+    <joint name="imu_joint" type="fixed">
+        <origin xyz="$(arg imu_xyz)" rpy="$(arg imu_rpy)" />
+        <parent link="$(arg imu_parent)" />
+        <child link="imu_link" />
+    </joint>
+
+    <!-- Wheel macros -->
+    <link name="front_left_wheel">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://windplanner/meshes/front_left_wheel.STL" />
+            </geometry>
+            <material name="black" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://windplanner/meshes/front_left_wheel.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="${wheelMass}" />
+            <inertia
+                ixx="0.00132782073402171"
+                ixy="7.90809461121298E-21"
+                ixz="3.05742980533874E-20"
+                iyy="0.00243843968168336"
+                iyz="4.98688210719635E-20"
+                izz="0.00132782073402171" />
+        </inertial>
+    </link>
+
+    <link name="front_right_wheel">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://windplanner/meshes/front_right_wheel.STL" />
+            </geometry>
+            <material name="black" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://windplanner/meshes/front_right_wheel.STL" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="${wheelMass}" />
+            <inertia
+                ixx="0.00132782073402171"
+                ixy="5.12509305138265E-22"
+                ixz="-3.49292730082154E-20"
+                iyy="0.00243843968168336"
+                iyz="2.95589682451085E-22"
+                izz="0.00132782073402171" />
+            </inertial>
+    </link>
+
+    <joint name="wheel_left_joint" type="continuous">
+        <origin xyz="${baseDist/2} ${wheelDist/2} ${wheelVerticalOffset}" rpy="0 0 0" />
+        <parent link="base_link"/>
+        <child link="front_left_wheel"/>
+        <axis xyz="0 1 0" />
+        <limit effort="100" velocity="100"/>
+        <joint_properties damping="0.0" friction="0.0"/>
+    </joint>
+
+    <joint name="wheel_right_joint" type="continuous">
+        <origin xyz="${baseDist/2} -${wheelDist/2} ${wheelVerticalOffset}" rpy="0 0 0" />
+        <parent link="base_link"/>
+        <child link="front_right_wheel"/>
+        <axis xyz="0 1 0" />
+        <limit effort="100" velocity="100"/>
+        <joint_properties damping="0.0" friction="0.0"/>
+    </joint>
+
+    <!-- Caster macros -->
+	<link name="caster_left_wheel">
+        <visual> 
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://windplanner/meshes/caster_left_wheel.STL" />
+			</geometry>
+			<material name="black" />
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://windplanner/meshes/caster_left_wheel.STL" />
+	  		</geometry>
+		</collision>
+		<inertial>
+        <origin xyz="-0.0138487437786192 0.000181340441442648 -0.0325815501210897" rpy="0 0 0" />
+        <mass value="${casterMass}" />
+        <inertia
+            ixx="2.43310503029481E-05"
+            ixy="3.22256686315386E-07"
+            ixz="-2.15177220763239E-06"
+            iyy="2.85056871061429E-05"
+            iyz="3.76604404126983E-07"
+            izz="2.98174317374428E-05" />
+        </inertial>
+	</link>
+
+    <link name="caster_right_wheel">
+        <visual> 
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://windplanner/meshes/caster_right_wheel.STL" />
+			</geometry>
+			<material name="black" />
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://windplanner/meshes/caster_right_wheel.STL" />
+	  		</geometry>
+		</collision>
+		<inertial>
+            <origin xyz="-0.0138487437786192 0.000181340441442662 -0.0325815501210897" rpy="0 0 0" />
+            <mass value="${casterMass}" />
+            <inertia
+                ixx="2.43310503029481E-05"
+                ixy="3.22256686315376E-07"
+                ixz="-2.15177220763239E-06"
+                iyy="2.85056871061429E-05"
+                iyz="3.76604404126974E-07"
+                izz="2.98174317374428E-05" />
+            </inertial>
+	</link>
+
+    <joint name="caster_left_joint" type="fixed">
+        <origin xyz="-0.1 0.085 0.038" rpy="0 0 0" />
+		<parent link="base_link"/>
+		<child link="caster_left_wheel"/>
+	</joint>
+
+    <joint name="caster_right_joint" type="fixed">
+        <origin xyz="-0.1 -0.085 0.038" rpy="0 0 0" />
+		<parent link="base_link"/>
+		<child link="caster_right_wheel"/>
+	</joint>
+
+</robot>

@@ -1,0 +1,14 @@
+<launch>
+    <include file="$(find windplanner)/launch/controller.launch" />
+
+    <!-- SLAM -->
+    <include file="$(find windplanner)/launch/real_slam.launch" />
+
+    <!-- Autonomous Planner -->
+    <include file="$(find windplanner)/launch/autonomous_explorer.launch" />
+
+    <!-- Rosbag Record -->
+    <node pkg="rosbag" type="record" name="rosbag_record_diag" args="record -o $(find windplanner)/Experiments/Odometry
+    /cmd_vel /leftEncoder /rightEncoder /rpmLeft /rpmRight /odom /camera/imu /imu/data /imu/filtered /scan"/>
+
+</launch>

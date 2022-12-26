@@ -1,0 +1,20 @@
+<launch>
+    <!-- Robot Demo Description -->
+    <param name ="use_sim_time" value="true"/>
+    <param name="robot_description" command="$(find xacro)/xacro '$(find windplanner)/urdf/robot.urdf.xacro' robot_namespace:=$(arg robot_namespace)" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+    <!-- SLAM -->
+    <include file="$(find windplanner)/launch/real_slam.launch" />
+
+    <node pkg="rosbag" type="play" name="player" args="--clock $(find windplanner)/Experiments/Odometry_Good_ex.bag"/>
+    
+    <node pkg="windplanner" type="visualizePath" name="visualizePath" output="screen" />
+
+    <!-- Arguments -->
+    <arg name="slam_methods" default="cartographer" doc="slam type [gmapping, cartographer, hector, karto]"/>
+
+    <!-- Rviz -->
+    <include file="$(find windplanner)/launch/rviz_odometry.launch" />
+
+</launch>

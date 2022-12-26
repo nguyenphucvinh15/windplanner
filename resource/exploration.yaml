@@ -1,0 +1,29 @@
+system/map_frame: "map"
+system/robot_frame: "base_link"
+system/pose_topic: "/pose"
+system/odom_topic: "/odom"
+system/map_topic: "/map"
+
+nbvpe/gain/overshoot: 0.3
+nbvpe/gain/probabilistic: 1.0
+nbvpe/gain/free: 0.0
+nbvpe/gain/occupied: 5.0
+nbvpe/gain/unmapped: 20.0
+nbvpe/gain/range: 3
+nbvpe/gain/degressive_coeff: 0.5
+nbvpe/gain/zero: 0.0
+
+nbvpe/tree/extension_range: 1.5
+nbvpe/tree/min_extension_range: 0.5
+nbvpe/tree/exact_root: false
+nbvpe/tree/initial_iterations: 20
+nbvpe/tree/cuttoff_iterations: 1000
+nbvpe/tree/number_samples: 1000
+
+system/bbx/x: 0.8
+system/bbx/y: 0.8
+system/mwbx/x: 3.0
+system/mwbx/y: 3.0
+
+nbvpe/replan/range: 10.0
+nbvpe/replan/sample_range: 0.5

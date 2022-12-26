@@ -1,0 +1,12 @@
+<launch>
+    <!-- Arguments -->
+    <arg name="slam_methods" default="gmapping" doc="slam type [gmapping, cartographer, hector, karto, frontier_exploration]"/>
+    
+    <!-- For Gazebo Robot -->
+    <arg name="configuration_basename" default="real_lds_2d_gazebo.lua"/>
+
+    <!-- SLAM: Gmapping, Cartographer, Hector, Karto, RTAB-Map -->
+    <include file="$(find windplanner)/launch/$(arg slam_methods)_slam.launch">
+        <arg name="configuration_basename" value="$(arg configuration_basename)"/>
+    </include>
+</launch>

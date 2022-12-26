@@ -1,0 +1,57 @@
+<robot name="materials" xmlns:xacro="http://ros.org/wiki/xacro">
+    <!-- Materials -->
+    <material name="dark_grey">
+      <color rgba="0.2 0.2 0.2 1.0" />
+    </material>
+    <material name="medium_grey">
+      <color rgba="0.6 0.6 0.6 1.0" />
+    </material>
+    <material name="light_grey">
+      <color rgba="0.8 0.8 0.8 1.0" />
+    </material>
+    <material name="yellow">
+      <color rgba="0.8 0.8 0.0 1.0" />
+    </material>
+    <material name="black">
+      <color rgba="0.15 0.15 0.15 1.0" />
+    </material>
+    <material name="white">
+      <color rgba="1.0 1.0 1.0 1.0" />
+    </material>
+    <material name="red">
+      <color rgba="1.0 0.0 0.0 1.0" />
+    </material>
+    <material name="orange">
+      <color rgba="1.0 0.5 0.2 1" />
+    </material>
+    <material name="gray">
+      <color rgba="0.2 0.2 0.2 1" />
+    </material>
+    <material name="aluminum">
+      <color rgba="0.5 0.5 0.5 1"/>
+    </material>
+    <material name="plastic">
+      <color rgba="0.1 0.1 0.1 1"/>
+    </material>
+
+    <!-- Shape Inertia -->
+    <xacro:macro name="box_inertia" params="m x y z">
+    <inertia  
+          ixx="${m*(y*y+z*z)/12}" 
+    			ixy = "0" 
+    			ixz = "0"
+    			iyy="${m*(x*x+z*z)/12}" 
+    			iyz = "0"
+    			izz="${m*(x*x+z*z)/12}" />
+    </xacro:macro>
+    <xacro:macro name="sphere_inertia" params="m r">
+    <inertia  
+          ixx="${2*m*r*r/5}" 
+    			ixy = "0" 
+    			ixz = "0"
+    			iyy="${2*m*r*r/5}" 
+    			iyz = "0"
+    			izz="${2*m*r*r/5}" />
+    </xacro:macro>
+
+</robot>

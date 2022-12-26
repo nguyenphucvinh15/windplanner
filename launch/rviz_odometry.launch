@@ -1,0 +1,5 @@
+<launch>
+    <!-- Rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+         args="-d $(find windplanner)/rviz/odometry.rviz"/>
+</launch>

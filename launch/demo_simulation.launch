@@ -1,0 +1,27 @@
+<launch>
+    <!-- Arguments -->
+    <arg name="robot_namespace" default="/"/>
+    <arg name="multi_robot_name" default=""/>
+    <arg name="move_forward_only" default="false"/>
+
+    <!-- Robot Description -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find windplanner)/urdf/robot.urdf.xacro' robot_namespace:=$(arg robot_namespace)" />
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+        <param name="tf_prefix" value="$(arg multi_robot_name)"/>
+    </node>
+
+    <!-- Gazebo -->
+    <include file="$(find windplanner)/launch/maze.launch" />
+
+    <!-- SLAM -->
+    <!-- <include file="$(find windplanner)/launch/sim_slam.launch" /> -->
+
+    <!-- Navigation -->
+    <!-- <include file="$(find windplanner)/launch/move_base.launch">
+        <arg name="move_forward_only" value="$(arg move_forward_only)"/>
+    </include> -->
+
+    <!-- Rviz -->
+    <include file="$(find windplanner)/launch/rviz_odometry.launch" />
+
+</launch>
